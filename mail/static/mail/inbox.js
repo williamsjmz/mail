@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('form').onsubmit = send_email;
 
   // By default, load the inbox
-  load_mailbox('sent');
+  load_mailbox('inbox');
 });
 
 function send_email() {
@@ -64,4 +64,36 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Load the mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    emails.forEach(email => {
+
+      // Gets the values from the dictionary
+      const sender = email.sender;
+      const subject = email.subject;
+      const timestamp = email.timestamp;
+      const read = email.read;
+      
+      // Creates the card-element for the email
+      const element = document.createElement('div');
+      element.innerHTML = `<strong>${sender}</strong>:  ${subject}  ${timestamp}`;
+
+      // Adding a props and style to the mail element
+      if (read) {
+        element.className = 'btn btn-light';
+      }else {
+        element.className = 'btn btn-secondary';
+      }
+      element.style.width = '100%';
+      element.style.margin = '5px';
+
+      document.querySelector('#emails-view').append(element);
+    });
+  })
+
+  // Stop form from submitting
+  return false;
 }
