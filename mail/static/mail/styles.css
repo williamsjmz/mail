@@ -8,6 +8,11 @@ textarea {
     padding: 5px;
 }
 
+.row {
+    width: 100%;
+    margin: 5px;
+}
+
 .row::after {
     content: "";
     display: table;

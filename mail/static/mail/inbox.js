@@ -78,26 +78,24 @@ function load_mailbox(mailbox) {
   return false;
 }
 
-// Add a new nauk with given contents to the mailbox
+// Add a new email with given contents to the mailbox
 function add_mail(email) {
 
   // Create new mail element
   const element = document.createElement('div');
   element.className = 'row';
 
-  // Add an onclick event listener
+  // Add an onclick event listener to the mail element
   element.addEventListener('click', event => view_email);
 
-  // Asign background color and some style
+  // Asign background color and some style to the email element
   if (email.read) {
     element.className = 'btn btn-secondary';
   }else {
     element.className = 'btn btn-light';
   }
-  element.style.width = '100%';
-  element.style.margin = '5px';
 
-  // Add inner HTML
+  // Add inner HTML to the email element
   element.innerHTML = `
     <div class="column" style="text-align: left;">
       <strong>${email.sender}</strong>
@@ -110,6 +108,6 @@ function add_mail(email) {
     </div>
   `;
 
-  // Add email to mailbox
+  // Add email element to mailbox
   document.querySelector('#emails-view').append(element);
 }
