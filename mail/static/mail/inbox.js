@@ -1,3 +1,5 @@
+let mailbox = 'inbox'
+
 document.addEventListener('DOMContentLoaded', function() {
 
   // Use buttons to toggle between views
@@ -10,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('form').onsubmit = send_email;
 
   // By default, load the inbox
-  load_mailbox('inbox');
+  load_mailbox(mailbox);
 });
 
 function send_email() {
@@ -31,14 +33,13 @@ function send_email() {
   })
   .then(response => response.json())
   .then(result => {
-      // Print result
+    if (result.error) {
       console.log(result);
+    }else {
+      console.log(result);
+      load_mailbox('sent');
+    }
   });
-
-  localStorage.clear();
-
-  // Loads the user's sent mailbox.
-  load_mailbox('sent');
 
   // Stop form from submitting
   return false;
@@ -56,8 +57,9 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+// Load selected mailbox
 function load_mailbox(mailbox) {
-  
+
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
@@ -69,31 +71,45 @@ function load_mailbox(mailbox) {
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
-    emails.forEach(email => {
-
-      // Gets the values from the dictionary
-      const sender = email.sender;
-      const subject = email.subject;
-      const timestamp = email.timestamp;
-      const read = email.read;
-      
-      // Creates the card-element for the email
-      const element = document.createElement('div');
-      element.innerHTML = `<strong>${sender}</strong>:  ${subject}  ${timestamp}`;
-
-      // Adding a props and style to the mail element
-      if (read) {
-        element.className = 'btn btn-light';
-      }else {
-        element.className = 'btn btn-secondary';
-      }
-      element.style.width = '100%';
-      element.style.margin = '5px';
-
-      document.querySelector('#emails-view').append(element);
-    });
+    emails.forEach(add_mail);
   })
 
   // Stop form from submitting
   return false;
+}
+
+// Add a new nauk with given contents to the mailbox
+function add_mail(email) {
+
+  // Create new mail element
+  const element = document.createElement('div');
+  element.className = 'row';
+
+  // Add an onclick event listener
+  element.addEventListener('click', event => view_email);
+
+  // Asign background color and some style
+  if (email.read) {
+    element.className = 'btn btn-secondary';
+  }else {
+    element.className = 'btn btn-light';
+  }
+  element.style.width = '100%';
+  element.style.margin = '5px';
+
+  // Add inner HTML
+  element.innerHTML = `
+    <div class="column" style="text-align: left;">
+      <strong>${email.sender}</strong>
+    </div>
+    <div class="column" style="text-align: center;">
+      ${email.subject}
+    </div>
+    <div class="column" style="text-align: right;">
+      ${email.timestamp}
+    </div>
+  `;
+
+  // Add email to mailbox
+  document.querySelector('#emails-view').append(element);
 }
