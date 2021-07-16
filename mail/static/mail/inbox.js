@@ -48,8 +48,7 @@ function send_email() {
 function compose_email() {
 
   // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
+  show_view('#compose-view', '#emails-view', '#email-view');
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -61,8 +60,7 @@ function compose_email() {
 function load_mailbox(mailbox) {
 
   // Show the mailbox and hide other views
-  document.querySelector('#emails-view').style.display = 'block';
-  document.querySelector('#compose-view').style.display = 'none';
+  show_view('#emails-view', '#compose-view', '#email-view');
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -86,7 +84,21 @@ function add_mail(email) {
   element.className = 'row';
 
   // Add an onclick event listener to the mail element
-  element.addEventListener('click', event => view_email);
+  element.addEventListener('click', () => {
+
+    // Mark the mail as read
+    fetch(`emails/${email.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        read: true
+      })
+    })
+
+    // Charge new mail info and show it
+    fetch(`emails/${email.id}`)
+    .then(response => response.json())
+    .then(email => view_email(email))
+  });
 
   // Asign background color and some style to the email element
   if (email.read) {
@@ -108,6 +120,64 @@ function add_mail(email) {
     </div>
   `;
 
+  // Adding some style 
+  element.style.width = '100%';
+  element.style.margin = '5px';
+
   // Add email element to mailbox
   document.querySelector('#emails-view').append(element);
+
+  // Stop form from submitting
+  return false;
+}
+
+function view_email(email) {
+
+  // Clear the inner HTML
+  document.querySelector('#email-view').innerHTML = '';
+
+  // Show the mail view and hide other views
+  show_view('#email-view', '#compose-view', '#emails-view');
+
+  // Create a new form element
+  const form = document.createElement('form');
+  form.id = 'email-form';
+
+  // Add inner HTML to the form element
+  form.innerHTML = `
+    <h3>View Mail</h3>
+
+    <div class="form-group" id="email-sender">
+      From: <input disabled class="form-control" value="${email.sender}">
+    </div>
+
+    <div class="form-group" id="email-recipients">
+      To: <input disabled class="form-control" value="${email.recipients}">
+    </div>
+
+    <div class="form-group" id="email-subject">
+      Subject: <input disabled class="form-control" value="${email.subject}">
+    </div>
+
+    <div class="form-group" id="email-timestamp">
+      Date: <input disabled class="form-control" value="${email.timestamp}">
+    </div>
+
+    <textarea disabled class="form-control" id="email-body">${email.body}</textarea>
+  `;
+
+  // Add email view to the email-view div
+  document.querySelector('#email-view').append(form);
+
+  // Stop form from submitting
+  return false;
+}
+
+function show_view() {
+  for (var i = 0; i < arguments.length; i++) {
+    if (i === 0)
+      document.querySelector(arguments[i]).style.display = 'block';
+    else
+      document.querySelector(arguments[i]).style.display = 'none';
+  }
 }
