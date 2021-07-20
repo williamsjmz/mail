@@ -2,15 +2,68 @@ textarea {
     min-height: 400px;
 }
 
-.column {
-    float: left;
-    width: 33.33%;
-    padding: 5px;
-}
-
 .row::after {
     content: "";
     display: table;
     clear: both;
-    
+}
+
+#user-email {
+    margin: 35px;
+    text-align: center;
+}
+
+#menu {
+    text-align: center;
+}
+
+.menu-btn {
+    margin-right: 20px;
+}
+
+h3 {
+    text-align: center;
+    margin: 30px;
+}
+
+.row {
+    width: 100%;
+    margin: 5px;
+}
+
+.col-4 {
+    float: left;
+}
+
+.submit-btn {
+    margin: 30px;
+    text-align: center;
+}
+
+.sbm-btn {
+    width: 35%;
+}
+
+#login-register {
+    text-align: center;
+    margin: 50px;
+}
+
+#email {
+    margin: 20px;
+    margin-top: 30px;
+}
+
+#password {
+    margin: 20px;   
+    margin-top: 30px;
+}
+
+#login-register-btn {
+    text-align: center;
+    margin: 30px;
+}
+
+#login-register-link {
+    text-align: center;
 }

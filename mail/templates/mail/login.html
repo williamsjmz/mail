@@ -2,7 +2,10 @@
 
 {% block body %}
 
-    <h2>Login</h2>
+    <div id="login-register">
+        <h2>Login</h2>
+    </div>
+
 
     {% if message %}
         <div>{{ message }}</div>
@@ -10,15 +13,19 @@
 
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        <div class="form-group">
+        <div id="email" class="form-group">
             <input autofocus class="form-control" type="email" name="email" placeholder="Email">
         </div>
-        <div class="form-group">
+        <div id="password" class="form-group">
             <input class="form-control" type="password" name="password" placeholder="Password">
         </div>
-        <input class="btn btn-primary" type="submit" value="Login">
+        <div id="login-register-btn">
+            <input class="btn btn-primary" type="submit" value="Login">
+        </div>
     </form>
 
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+    <div id="login-register-link">
+        Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+    </div>
 
 {% endblock %}
